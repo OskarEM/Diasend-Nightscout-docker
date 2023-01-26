@@ -1,0 +1,27 @@
+@diasendHostname = api.diasend.com
+@diasendClientId = {{$dotenv DIASEND_CLIENT_ID}}
+@diasendClientSecret = {{$dotenv DIASEND_CLIENT_SECRET}}
+@diasendUsername = {{$dotenv DIASEND_USERNAME}}
+@diasendPassword = {{$dotenv DIASEND_PASSWORD}}
+
+# @name GetAccessToken
+
+POST https://{{diasendHostname}}/1/oauth2/token
+User-Agent: diasend/1.13.0 (iPhone; iOS 15.5; Scale/3.00)
+Authorization: Basic {{diasendClientId}}:{{diasendClientSecret}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&password={{diasendPassword}}&scope=PATIENT%20DIASEND_MOBILE_DEVICE_DATA_RW&username={{diasendUsername}}
+
+###
+
+# @name GetPatientData
+
+GET https://{{diasendHostname}}/1/patient/data
+?type=combined
+&date_from=2022-08-23T00:00:01
+&date_to=2022-08-23T23:59:59
+&unit=mmol_l
+Authorization: Bearer {{GetAccessToken.response.body.access_token}}
+
+###
